@@ -39,7 +39,13 @@ define(function (require, exports, module) {
             text: "Use Tab",
             description: "Use Tab for indentation instead of spaces.",
             type: "Check",
-            default: true
+            default: false
+        },
+        "python.gen.indentSpaces": {
+            text: "Indent Spaces",
+            description: "Number of spaces for indentation.",
+            type: "Number",
+            default: 4
         }
     };
 
@@ -49,8 +55,9 @@ define(function (require, exports, module) {
 
     function getGenOptions() {
         return {
-            installPath : PreferenceManager.get("python.gen.installPath"),
-            useTab      : PreferenceManager.get("python.gen.useTab")
+            installPath  : PreferenceManager.get("python.gen.installPath"),
+            useTab       : PreferenceManager.get("python.gen.useTab"),
+            indentSpaces : PreferenceManager.get("python.gen.indentSpaces")
         };
     }
 

@@ -14,8 +14,8 @@ Belows are the rules to convert from UML model elements to Python source codes.
 
 ### UMLPackage
 
-* converted to _Python Package_ (as a folder with `__init__.py`).
+* converted to a _Python Package_ (as a folder with `__init__.py`).
 
-### UMLClass
+### UMLClass, UMLInterface
 
-* converted to _Python Class_.
+* converted to a _Python Module_ with a _Python Class_ definition.
