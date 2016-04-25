@@ -82,13 +82,88 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Write Variable
+     * @param {StringWriter} codeWriter
+     * @param {type.Model} elem
+     * @param {Object} options
+     */
+    PythonCodeGenerator.prototype.writeVariable = function (codeWriter, elem, options, isClassVar) {
+        if (elem.name.length > 0) {
+            var line;
+            if (isClassVar) {
+                line = elem.name;
+            } else {
+                line = "self." + elem.name;
+            }
+            if (elem.defaultValue && elem.defaultValue.length > 0) {
+                line += " = " + elem.defaultValue;
+            } else {
+                line += " = None";
+            }
+            codeWriter.writeLine(line);
+        }
+    };
+
+    /**
+     * Write Constructor
+     * @param {StringWriter} codeWriter
+     * @param {type.Model} elem
+     * @param {Object} options
+     */
+    PythonCodeGenerator.prototype.writeConstructor = function (codeWriter, elem, options) {
+        var self = this,
+            hasBody = false;
+        codeWriter.writeLine("def __init__(self):");
+        codeWriter.indent();
+        if (elem.attributes.length > 0) {
+            elem.attributes.forEach(function (attr) {
+                if (attr.isStatic === false) {
+                    self.writeVariable(codeWriter, attr, options, false);
+                    hasBody = true;
+                }
+            });
+        }
+        if (!hasBody) {
+            codeWriter.writeLine("pass");
+        }
+        codeWriter.outdent();
+        codeWriter.writeLine();
+    };
+
+    /**
+     * Write Method
+     * @param {StringWriter} codeWriter
+     * @param {type.Model} elem
+     * @param {Object} options
+     * @param {boolean} skipBody
+     * @param {boolean} skipParams
+     */
+    PythonCodeGenerator.prototype.writeMethod = function (codeWriter, elem, options) {
+        if (elem.name.length > 0) {
+            // name
+            var line = "def " + elem.name;
+            
+            // params
+            var params = elem.getNonReturnParameters();
+            line += "(" + _.map(params, function (p) { return p.name; }).join(", ") + "):";
+            
+            codeWriter.writeLine(line);
+            codeWriter.indent();
+            codeWriter.writeLine("pass");
+            codeWriter.outdent();
+            codeWriter.writeLine();
+        }
+    };
+    
+    /**
      * Write Class
      * @param {StringWriter} codeWriter
      * @param {type.Model} elem
      * @param {Object} options
      */
     PythonCodeGenerator.prototype.writeClass = function (codeWriter, elem, options) {
-        var line = "";
+        var self = this,
+            line = "";
 
         // Class
         line = "class " + elem.name;
@@ -101,8 +176,29 @@ define(function (require, exports, module) {
 
         codeWriter.writeLine(line + ":");
         codeWriter.indent();
-        codeWriter.writeLine("pass");
+        
+        if (elem.attributes.length === 0 && elem.operations.length === 0) {
+            codeWriter.writeLine("pass");
+        } else {
+            // Class Variable
+            elem.attributes.forEach(function (attr) {
+                if (attr.isStatic) {
+                    self.writeVariable(codeWriter, attr, options, true);
+                } 
+            });
+            
+            // Constructor
+            this.writeConstructor(codeWriter, elem, options);
+            
+            // Methods
+            if (elem.operations.length > 0) {
+                elem.operations.forEach(function (op) {
+                     self.writeMethod(codeWriter, op, options);
+                });
+            }
+        }
         codeWriter.outdent();
+        codeWriter.writeLine();
     };
 
     /**
