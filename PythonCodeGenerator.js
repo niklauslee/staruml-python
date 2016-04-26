@@ -82,6 +82,27 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Write Doc
+     * @param {StringWriter} codeWriter
+     * @param {string} text
+     * @param {Object} options
+     */
+    PythonCodeGenerator.prototype.writeDoc = function (codeWriter, text, options) {
+        var i, len, lines;
+        if (options.docString && text.trim().length > 0) {
+            lines = text.trim().split("\n");
+            for (i = 0, len = lines.length; i < len; i++) {
+                if (i === 0) {
+                    codeWriter.writeLine('"""' + lines[i]);
+                } else {
+                    codeWriter.writeLine(lines[i]);
+                }
+            }
+            codeWriter.writeLine('"""');
+        }
+    };
+    
+    /**
      * Write Variable
      * @param {StringWriter} codeWriter
      * @param {type.Model} elem
@@ -149,6 +170,7 @@ define(function (require, exports, module) {
             
             codeWriter.writeLine(line);
             codeWriter.indent();
+            this.writeDoc(codeWriter, elem.documentation, options);
             codeWriter.writeLine("pass");
             codeWriter.outdent();
             codeWriter.writeLine();
@@ -176,6 +198,9 @@ define(function (require, exports, module) {
 
         codeWriter.writeLine(line + ":");
         codeWriter.indent();
+        
+        // Docstring
+        this.writeDoc(codeWriter, elem.documentation, options);
         
         if (elem.attributes.length === 0 && elem.operations.length === 0) {
             codeWriter.writeLine("pass");

@@ -7160,6 +7160,7 @@
 														"$ref": "AAAAAAFF8IcEz21nWVg="
 													},
 													"name": "AbstractOperation",
+													"documentation": "This is abstract operation docstring.\nThis is the second line docstring.",
 													"visibility": "public",
 													"isStatic": false,
 													"isLeaf": false,

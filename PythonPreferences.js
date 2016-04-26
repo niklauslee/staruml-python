@@ -46,7 +46,13 @@ define(function (require, exports, module) {
             description: "Number of spaces for indentation.",
             type: "Number",
             default: 4
-        }
+        },
+        "python.gen.docString": {
+            text: "Docstring",
+            description: "Generate docstrings.",
+            type: "Check",
+            default: true
+        }        
     };
 
     function getId() {
@@ -57,7 +63,8 @@ define(function (require, exports, module) {
         return {
             installPath  : PreferenceManager.get("python.gen.installPath"),
             useTab       : PreferenceManager.get("python.gen.useTab"),
-            indentSpaces : PreferenceManager.get("python.gen.indentSpaces")
+            indentSpaces : PreferenceManager.get("python.gen.indentSpaces"),
+            docString    : PreferenceManager.get("python.gen.docString")
         };
     }
 
