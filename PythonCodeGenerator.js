@@ -91,14 +91,18 @@ define(function (require, exports, module) {
         var i, len, lines;
         if (options.docString && text.trim().length > 0) {
             lines = text.trim().split("\n");
-            for (i = 0, len = lines.length; i < len; i++) {
-                if (i === 0) {
-                    codeWriter.writeLine('"""' + lines[i]);
-                } else {
-                    codeWriter.writeLine(lines[i]);
+            if (lines.length > 1) {
+                for (i = 0, len = lines.length; i < len; i++) {
+                    if (i === 0) {
+                        codeWriter.writeLine('"""' + lines[i]);
+                    } else {
+                        codeWriter.writeLine(lines[i]);
+                    }
                 }
+                codeWriter.writeLine('"""');
+            } else {
+                codeWriter.writeLine('"""' + lines[0] + '"""');
             }
-            codeWriter.writeLine('"""');
         }
     };
     
@@ -166,15 +170,53 @@ define(function (require, exports, module) {
             
             // params
             var params = elem.getNonReturnParameters();
-            line += "(" + _.map(params, function (p) { return p.name; }).join(", ") + "):";
+            var paramStr = _.map(params, function (p) { return p.name; }).join(", ");
             
-            codeWriter.writeLine(line);
+            if (elem.isStatic) {
+                codeWriter.writeLine("@classmethod");
+                codeWriter.writeLine(line + "(cls, " + paramStr + "):");
+            } else {
+                codeWriter.writeLine(line + "(self, " + paramStr + "):");
+            }
             codeWriter.indent();
             this.writeDoc(codeWriter, elem.documentation, options);
             codeWriter.writeLine("pass");
             codeWriter.outdent();
             codeWriter.writeLine();
         }
+    };
+
+    /**
+     * Write Enum
+     * @param {StringWriter} codeWriter
+     * @param {type.Model} elem
+     * @param {Object} options
+     */
+    PythonCodeGenerator.prototype.writeEnum = function (codeWriter, elem, options) {
+        var self = this,
+            line = "";
+
+        codeWriter.writeLine("from enum import Enum");
+        codeWriter.writeLine();
+        
+        // Enum
+        line = "class " + elem.name + "(Enum):";
+        codeWriter.writeLine(line);
+        codeWriter.indent();
+        
+        // Docstring
+        this.writeDoc(codeWriter, elem.documentation, options);
+        
+        if (elem.literals.length === 0) {
+            codeWriter.writeLine("pass");
+        } else {
+            for (var i = 0, len = elem.literals.length; i < len; i++) {
+                codeWriter.writeLine(elem.literals[i].name + " = " + (i + 1));
+            }
+            
+        }
+        codeWriter.outdent();
+        codeWriter.writeLine();
     };
     
     /**
@@ -206,11 +248,16 @@ define(function (require, exports, module) {
             codeWriter.writeLine("pass");
         } else {
             // Class Variable
+            var hasClassVar = false;
             elem.attributes.forEach(function (attr) {
                 if (attr.isStatic) {
                     self.writeVariable(codeWriter, attr, options, true);
-                } 
+                    hasClassVar = true;
+                }
             });
+            if (hasClassVar) {
+                codeWriter.writeLine();
+            }
             
             // Constructor
             this.writeConstructor(codeWriter, elem, options);
@@ -277,6 +324,17 @@ define(function (require, exports, module) {
             file = FileSystem.getFileForPath(fullPath);
             FileUtils.writeText(file, codeWriter.getData(), true).then(result.resolve, result.reject);
 
+        // Enum
+        } else if (elem instanceof type.UMLEnumeration) {
+            fullPath = path + "/" + elem.name + ".py";
+            codeWriter = new CodeGenUtils.CodeWriter(this.getIndentString(options));
+            codeWriter.writeLine(options.installPath);
+            codeWriter.writeLine("#-*- coding: utf-8 -*-");
+            codeWriter.writeLine();
+            this.writeEnum(codeWriter, elem, options);
+            file = FileSystem.getFileForPath(fullPath);
+            FileUtils.writeText(file, codeWriter.getData(), true).then(result.resolve, result.reject);
+            
         // Others (Nothing generated.)
         } else {
             result.resolve();

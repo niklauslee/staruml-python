@@ -14,8 +14,27 @@ Belows are the rules to convert from UML model elements to Python source codes.
 
 ### UMLPackage
 
-* converted to a _Python Package_ (as a folder with `__init__.py`).
+* converted to a python _Package_ (as a folder with `__init__.py`).
 
 ### UMLClass, UMLInterface
 
-* converted to a _Python Module_ with a _Python Class_ definition.
+* converted to a python _Class_ definition as a separated module (`.py`).
+* Default constructor is generated (`def __init__(self):`)
+* `documentation` property to docstring
+
+### UMLEnumeration
+
+* converted to a python class inherited from _Enum_ as a separated module (`.py`).
+* literals converted to class variables
+
+### UMLAttribute
+
+* converted to an instance variable if `isStatic` property is true, or a class variable if `isStatic` property is false
+* `name` property to identifier
+* `documentation` property to docstring
+
+### UMLOperation
+
+* converted to an instance method if `isStatic` property is true, or a class method (`@classmethod`) if `isStatic` property is false
+* `name` property to identifier
+* `documentation` property to docstring
