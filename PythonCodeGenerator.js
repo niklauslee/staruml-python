@@ -120,7 +120,9 @@ define(function (require, exports, module) {
             } else {
                 line = "self." + elem.name;
             }
-            if (elem.defaultValue && elem.defaultValue.length > 0) {
+            if (elem.multiplicity && _.contains(["0..*", "1..*", "*"], elem.multiplicity.trim())) {
+                line += " = []";
+            } else if (elem.defaultValue && elem.defaultValue.length > 0) {
                 line += " = " + elem.defaultValue;
             } else {
                 line += " = None";
@@ -140,6 +142,8 @@ define(function (require, exports, module) {
             hasBody = false;
         codeWriter.writeLine("def __init__(self):");
         codeWriter.indent();
+        
+        // from attributes
         if (elem.attributes.length > 0) {
             elem.attributes.forEach(function (attr) {
                 if (attr.isStatic === false) {
@@ -148,9 +152,27 @@ define(function (require, exports, module) {
                 }
             });
         }
+        
+        // from associations
+        var associations = Repository.getRelationshipsOf(elem, function (rel) {
+            return (rel instanceof type.UMLAssociation);
+        });
+        for (var i = 0, len = associations.length; i < len; i++) {
+            var asso = associations[i];
+            if (asso.end1.reference === elem && asso.end2.navigable === true) {
+                self.writeVariable(codeWriter, asso.end2, options);
+                hasBody = true;
+            }
+            if (asso.end2.reference === elem && asso.end1.navigable === true) {
+                self.writeVariable(codeWriter, asso.end1, options);
+                hasBody = true;
+            }
+        }
+        
         if (!hasBody) {
             codeWriter.writeLine("pass");
         }
+        
         codeWriter.outdent();
         codeWriter.writeLine();
     };

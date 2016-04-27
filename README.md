@@ -27,11 +27,12 @@ Belows are the rules to convert from UML model elements to Python source codes.
 * converted to a python class inherited from _Enum_ as a separated module (`.py`).
 * literals converted to class variables
 
-### UMLAttribute
+### UMLAttribute, UMLAssociationEnd
 
 * converted to an instance variable if `isStatic` property is true, or a class variable if `isStatic` property is false
 * `name` property to identifier
 * `documentation` property to docstring
+* If `multiplicity` is one of `0..*`, `1..*`, `*`, then the variable will be initialized with `[]`.
 
 ### UMLOperation
 
