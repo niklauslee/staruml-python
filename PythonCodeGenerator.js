@@ -92,12 +92,9 @@ define(function (require, exports, module) {
         if (options.docString && text.trim().length > 0) {
             lines = text.trim().split("\n");
             if (lines.length > 1) {
+                codeWriter.writeLine('"""');
                 for (i = 0, len = lines.length; i < len; i++) {
-                    if (i === 0) {
-                        codeWriter.writeLine('"""' + lines[i]);
-                    } else {
-                        codeWriter.writeLine(lines[i]);
-                    }
+                    codeWriter.writeLine(lines[i]);
                 }
                 codeWriter.writeLine('"""');
             } else {
@@ -249,13 +246,22 @@ define(function (require, exports, module) {
      */
     PythonCodeGenerator.prototype.writeClass = function (codeWriter, elem, options) {
         var self = this,
-            line = "";
+            line = "",
+            _inherits = this.getInherits(elem);
 
+        // Import
+        if (_inherits.length > 0) {
+            _inherits.forEach(function (e) {
+                var _path = _.map(e.getPath(self.baseModel), function (item) { return item.name; }).join(".");
+                codeWriter.writeLine("from " + _path + " import " + e.name);
+            });
+            codeWriter.writeLine();
+        }
+        
         // Class
         line = "class " + elem.name;
 
         // Inherits
-        var _inherits = this.getInherits(elem);
         if (_inherits.length > 0) {
             line += "(" + _.map(_inherits, function (e) { return e.name; }).join(", ") + ")";
         }
@@ -372,9 +378,26 @@ define(function (require, exports, module) {
      * @param {Object} options
      */
     function generate(baseModel, basePath, options) {
-        var result = new $.Deferred();
-        var pythonCodeGenerator = new PythonCodeGenerator(baseModel, basePath);
-        return pythonCodeGenerator.generate(baseModel, basePath, options);
+        var result = new $.Deferred(),
+            directory,
+            fullPath;
+        var pythonCodeGenerator = new PythonCodeGenerator(baseModel, basePath);        
+        fullPath = basePath + "/" + baseModel.name;
+        directory = FileSystem.getDirectoryForPath(fullPath);
+        directory.create(function (err, stat) {
+            if (!err) {
+                Async.doSequentially(
+                    baseModel.ownedElements,
+                    function (child) {
+                        return pythonCodeGenerator.generate(child, fullPath, options);
+                    },
+                    false
+                ).then(result.resolve, result.reject);
+            } else {
+                result.reject(err);
+            }
+        });
+        return result.promise();
     }
 
     exports.generate = generate;

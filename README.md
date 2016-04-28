@@ -39,3 +39,9 @@ Belows are the rules to convert from UML model elements to Python source codes.
 * converted to an instance method if `isStatic` property is true, or a class method (`@classmethod`) if `isStatic` property is false
 * `name` property to identifier
 * `documentation` property to docstring
+* _UMLParameter_ to method parameter
+
+### UMLGeneralization, UMLInterfaceRealization
+
+* converted to inheritance
+
