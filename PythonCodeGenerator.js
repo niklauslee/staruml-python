@@ -111,11 +111,14 @@ define(function (require, exports, module) {
      */
     PythonCodeGenerator.prototype.writeVariable = function (codeWriter, elem, options, isClassVar) {
         if (elem.name.length > 0) {
-            var line;
+            var line = "";
+            if (elem.visibility == UML.VK_PRIVATE) {
+                line = "__";
+            }
             if (isClassVar) {
-                line = elem.name;
+                line += elem.name;
             } else {
-                line = "self." + elem.name;
+                line += "self." + elem.name;
             }
             if (elem.multiplicity && _.contains(["0..*", "1..*", "*"], elem.multiplicity.trim())) {
                 line += " = []";
