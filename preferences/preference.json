@@ -1,0 +1,34 @@
+{
+  "id": "python",
+  "name": "Python",
+  "schema": {
+    "python.gen": {
+      "text": "Python Code Generation",
+      "type": "section"
+    },
+    "python.gen.installPath": {
+      "text": "Installation Path",
+      "description": "Installation path of python",
+      "type": "string",
+      "default": "#!/usr/bin/python"
+    },
+    "python.gen.useTab": {
+      "text": "Use Tab",
+      "description": "Use Tab for indentation instead of spaces.",
+      "type": "check",
+      "default": false
+    },
+    "python.gen.indentSpaces": {
+      "text": "Indent Spaces",
+      "description": "Number of spaces for indentation.",
+      "type": "number",
+      "default": 4
+    },
+    "python.gen.docString": {
+      "text": "Docstring",
+      "description": "Generate docstrings.",
+      "type": "check",
+      "default": true
+    }        
+  }
+}

@@ -21,117 +21,68 @@
  *
  */
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, regexp: true */
-/*global define, $, _, window, app, type, appshell, document */
+const codeGenerator = require('./code-generator')
 
-define(function (require, exports, module) {
-    "use strict";
+function getGenOptions () {
+  return {
+    installPath: app.preferences.get('python.gen.installPath'),
+    useTab: app.preferences.get('python.gen.useTab'),
+    indentSpaces: app.preferences.get('python.gen.indentSpaces'),
+    docString: app.preferences.get('python.gen.docString')
+  }
+}
 
-    var AppInit             = app.getModule("utils/AppInit"),
-        Repository          = app.getModule("core/Repository"),
-        Engine              = app.getModule("engine/Engine"),
-        Commands            = app.getModule("command/Commands"),
-        CommandManager      = app.getModule("command/CommandManager"),
-        MenuManager         = app.getModule("menu/MenuManager"),
-        Dialogs             = app.getModule("dialogs/Dialogs"),
-        ElementPickerDialog = app.getModule("dialogs/ElementPickerDialog"),
-        FileSystem          = app.getModule("filesystem/FileSystem"),
-        FileSystemError     = app.getModule("filesystem/FileSystemError"),
-        ExtensionUtils      = app.getModule("utils/ExtensionUtils"),
-        UML                 = app.getModule("uml/UML");
-
-    var CodeGenUtils        = require("CodeGenUtils"),
-        PythonPreferences   = require("PythonPreferences"),
-        PythonCodeGenerator = require("PythonCodeGenerator");
-
-    /**
-     * Commands IDs
-     */
-    var CMD_PYTHON           = 'python',
-        CMD_PYTHON_GENERATE  = 'python.generate',
-        CMD_PYTHON_CONFIGURE = 'python.configure';
-
-    /**
-     * Command Handler for Python Code Generation
-     *
-     * @param {Element} base
-     * @param {string} path
-     * @param {Object} options
-     * @return {$.Promise}
-     */
-    function _handleGenerate(base, path, options) {
-        var result = new $.Deferred();
-
-        // If options is not passed, get from preference
-        options = options || PythonPreferences.getGenOptions();
-
-        // If base is not assigned, popup ElementPicker
-        if (!base) {
-            ElementPickerDialog.showDialog("Select a base model to generate codes", null, type.UMLPackage)
-                .done(function (buttonId, selected) {
-                    if (buttonId === Dialogs.DIALOG_BTN_OK && selected) {
-                        base = selected;
-
-                        // If path is not assigned, popup Open Dialog to select a folder
-                        if (!path) {
-                            FileSystem.showOpenDialog(false, true, "Select a folder where generated codes to be located", null, null, function (err, files) {
-                                if (!err) {
-                                    if (files.length > 0) {
-                                        path = files[0];
-                                        PythonCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
-                                    } else {
-                                        result.reject(FileSystem.USER_CANCELED);
-                                    }
-                                } else {
-                                    result.reject(err);
-                                }
-                            });
-                        } else {
-                            PythonCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
-                        }
-                    } else {
-                        result.reject();
-                    }
-                });
+/**
+ * Command Handler for Python Code Generation
+ *
+ * @param {Element} base
+ * @param {string} path
+ * @param {Object} options
+ */
+function _handleGenerate (base, path, options) {
+  // If options is not passed, get from preference
+  options = options || getGenOptions()
+  // If base is not assigned, popup ElementPicker
+  if (!base) {
+    app.elementPickerDialog.showDialog('Select a base model to generate codes', null, type.UMLPackage).then(function ({buttonId, returnValue}) {
+      if (buttonId === 'ok') {
+        base = returnValue
+        // If path is not assigned, popup Open Dialog to select a folder
+        if (!path) {
+          var files = app.dialogs.showOpenDialog('Select a folder where generated codes to be located', null, null, { properties: [ 'openDirectory' ] })
+          if (files && files.length > 0) {
+            path = files[0]
+            codeGenerator.generate(base, path, options)
+          }
         } else {
-            // If path is not assigned, popup Open Dialog to select a folder
-            if (!path) {
-                FileSystem.showOpenDialog(false, true, "Select a folder where generated codes to be located", null, null, function (err, files) {
-                    if (!err) {
-                        if (files.length > 0) {
-                            path = files[0];
-                            PythonCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
-                        } else {
-                            result.reject(FileSystem.USER_CANCELED);
-                        }
-                    } else {
-                        result.reject(err);
-                    }
-                });
-            } else {
-                PythonCodeGenerator.generate(base, path, options).then(result.resolve, result.reject);
-            }
+          codeGenerator.generate(base, path, options)
         }
-        return result.promise();
+      }
+    })
+  } else {
+    // If path is not assigned, popup Open Dialog to select a folder
+    if (!path) {
+      var files = app.dialogs.showOpenDialog('Select a folder where generated codes to be located', null, null, { properties: [ 'openDirectory' ] })
+      if (files && files.length > 0) {
+        path = files[0]
+        codeGenerator.generate(base, path, options)
+      }
+    } else {
+      codeGenerator.generate(base, path, options)
     }
+  }
+}
 
-    /**
-     * Popup PreferenceDialog with Python Preference Schema
-     */
-    function _handleConfigure() {
-        CommandManager.execute(Commands.FILE_PREFERENCES, PythonPreferences.getId());
-    }
+/**
+ * Popup PreferenceDialog with Python Preference Schema
+ */
+function _handleConfigure () {
+  app.commands.execute('application:preferences', 'python')
+}
 
-    // Register Commands
-    CommandManager.register("Python",           CMD_PYTHON,           CommandManager.doNothing);
-    CommandManager.register("Generate Code...", CMD_PYTHON_GENERATE,  _handleGenerate);
-    CommandManager.register("Configure...",     CMD_PYTHON_CONFIGURE, _handleConfigure);
+function init () {
+  app.commands.register('python:generate', _handleGenerate)
+  app.commands.register('python:configure', _handleConfigure)
+}
 
-    var menu, menuItem;
-    menu = MenuManager.getMenu(Commands.TOOLS);
-    menuItem = menu.addMenuItem(CMD_PYTHON);
-    menuItem.addMenuItem(CMD_PYTHON_GENERATE);
-    menuItem.addMenuDivider();
-    menuItem.addMenuItem(CMD_PYTHON_CONFIGURE);
-
-});
+exports.init = init

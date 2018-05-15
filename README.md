@@ -1,5 +1,5 @@
-Python Extension for StarUML 2
-==============================
+Python Extension for StarUML
+============================
 
 This extension for StarUML(http://staruml.io) support to generate Python code from UML model. Install this extension from Extension Manager of StarUML.
 
