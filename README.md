@@ -1,3 +1,6 @@
+> # LOOKING FOR A NEW MAINTAINER
+> If you are interested to be a new maintainer, please create an issue with the title "Become a new maintainer".
+
 Python Extension for StarUML
 ============================
 
