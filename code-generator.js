@@ -316,7 +316,7 @@ class PythonCodeGenerator {
       fullPath = basePath + '/' + elem.name + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine(options.installPath)
-      codeWriter.writeLine('#-*- coding: utf-8 -*-')
+      codeWriter.writeLine('# -*- coding: utf-8 -*-')
       codeWriter.writeLine()
       this.writeClass(codeWriter, elem, options)
       fs.writeFileSync(fullPath, codeWriter.getData())
@@ -326,7 +326,7 @@ class PythonCodeGenerator {
       fullPath = basePath + '/' + elem.name + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine(options.installPath)
-      codeWriter.writeLine('#-*- coding: utf-8 -*-')
+      codeWriter.writeLine('# -*- coding: utf-8 -*-')
       codeWriter.writeLine()
       this.writeEnum(codeWriter, elem, options)
       fs.writeFileSync(fullPath, codeWriter.getData())
