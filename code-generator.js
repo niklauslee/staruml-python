@@ -246,6 +246,7 @@ class PythonCodeGenerator {
         codeWriter.writeLine('from ' + _path + ' import ' + e.name)
       })
       codeWriter.writeLine()
+      codeWriter.writeLine()
     }
 
     // Class
@@ -288,7 +289,7 @@ class PythonCodeGenerator {
       }
     }
     codeWriter.outdent()
-    codeWriter.writeLine()
+    
   }
 
   /**
