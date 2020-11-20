@@ -32,14 +32,14 @@ Belows are the rules to convert from UML model elements to Python source codes.
 
 ### UMLAttribute, UMLAssociationEnd
 
-* converted to an instance variable if `isStatic` property is true, or a class variable if `isStatic` property is false
+* converted to an instance variable if `isStatic` property is false, or a class variable if `isStatic` property is true
 * `name` property to identifier
 * `documentation` property to docstring
 * If `multiplicity` is one of `0..*`, `1..*`, `*`, then the variable will be initialized with `[]`.
 
 ### UMLOperation
 
-* converted to an instance method if `isStatic` property is true, or a class method (`@classmethod`) if `isStatic` property is false
+* converted to an instance method if `isStatic` property is false, or a class method (`@classmethod`) if `isStatic` property is true
 * `name` property to identifier
 * `documentation` property to docstring
 * _UMLParameter_ to method parameter
