@@ -314,7 +314,7 @@ class PythonCodeGenerator {
 
     // Class
     } else if (elem instanceof type.UMLClass || elem instanceof type.UMLInterface) {
-      fullPath = basePath + '/' + ((options.lowerCase) ? elem.name.toLowerCase() : elem.name) + '.py'
+      fullPath = basePath + '/' + ((options.lowerCase) ? codegen.toCamelCase(elem.name.toLowerCase()) : codegen.toCamelCase(elem.name)) + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine(options.installPath)
       codeWriter.writeLine('# -*- coding: utf-8 -*-')
