@@ -75,4 +75,18 @@ class CodeWriter {
 
 }
 
-exports.CodeWriter = CodeWriter
+
+exports.CodeWriter = CodeWriter;
+
+/**
+* Return as camelCase the given string
+* @param {string} name
+* @return {string} camelCase name
+*/
+function toCamelCase(name){
+ return name.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
+   if (+match === 0) return "";
+   return index === 0 ? match.toLowerCase() : match.toUpperCase();
+ });
+}
+export { toCamelCase };
