@@ -29,6 +29,46 @@
       "description": "Generate docstrings.",
       "type": "check",
       "default": true
-    }        
+    },
+    "python.rev": {
+      "text": "Python Reverse Engineering",
+      "type": "section"
+    },
+    "python.rev.PythonPath": {
+      "text": "Pyton Installation Path",
+      "description": "Installation path of python",
+      "type": "string",
+      "default": "/usr/bin/python"
+    },
+    "python.rev.skipSelfParam": {
+      "text": "Skip self parameter",
+      "description": "Don't show self parameter in methods.",
+      "type": "check",
+      "default": true
+    },
+    "python.rev.skipMagicMethods": {
+      "text": "Skip Magic Methods",
+      "description": "Don't show Python's magic methods. Like __repr__, __hash__, etc.",
+      "type": "check",
+      "default": true
+    },
+    "python.rev.typeHierarchy": {
+      "text": "Type Hierarchy Diagram",
+      "description": "Create a type hierarchy diagram for all classes and interfaces",
+      "type": "check",
+      "default": true
+    },
+    "python.rev.packageOverview": {
+      "text": "Package Overview Diagram",
+      "description": "Create overview diagram for each package",
+      "type": "check",
+      "default": true
+    },
+    "python.rev.packageStructure": {
+      "text": "Package Structure Diagram",
+      "description": "Create a package structure diagram for all packages",
+      "type": "check",
+      "default": true
+    }
   }
 }

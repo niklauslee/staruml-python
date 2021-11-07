@@ -1,10 +1,12 @@
 {
   "name": "niklauslee.staruml-python",
   "title": "Python",
-  "description": "Python code generator",
+  "description": "Python code generator and reverse engineering.",
   "homepage": "https://github.com/niklauslee/staruml-python",
   "issues": "https://github.com/niklauslee/staruml-python/issues",
-  "keywords": ["python"],
+  "keywords": [
+    "python"
+  ],
   "version": "0.9.1",
   "author": {
     "name": "Minkyu Lee",
@@ -14,5 +16,10 @@
   "license": "MIT",
   "engines": {
     "staruml": "^3.0.0"
+  },
+  "dependencies": {
+    "antlr4": "^4.7.2",
+    "circular-json": "^0.5.9",
+    "flatted": "^3.2.2"
   }
 }
