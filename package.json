@@ -16,10 +16,5 @@
   "license": "MIT",
   "engines": {
     "staruml": "^3.0.0"
-  },
-  "dependencies": {
-    "antlr4": "^4.7.2",
-    "circular-json": "^0.5.9",
-    "flatted": "^3.2.2"
   }
 }
