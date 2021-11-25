@@ -8,6 +8,7 @@
           "id": "tools.python",
           "submenu": [
             { "label": "Generate Code...", "id": "tools.python.generate", "command": "python:generate" },
+            { "label": "Reverse Code...", "id": "tools.python.reverse", "command": "python:reverse" },
             { "type": "separator" },
             { "label": "Configure...", "id": "tools.python.configure", "command": "python:configure" }
           ]
