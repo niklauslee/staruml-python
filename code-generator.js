@@ -242,7 +242,7 @@ class PythonCodeGenerator {
     // Import
     if (_inherits.length > 0) {
       _inherits.forEach(function (e) {
-        var _path = e.getPath(self.baseModel).map(function (item) { return item.name }).join('.')
+        var _path = e.getPath(self.baseModel).map(function (item) { return ((options.lowerCase) ? item.name.toLowerCase() : item.name) }).join('.')
         codeWriter.writeLine('from ' + _path + ' import ' + e.name)
       })
       codeWriter.writeLine()
@@ -314,7 +314,7 @@ class PythonCodeGenerator {
 
     // Class
     } else if (elem instanceof type.UMLClass || elem instanceof type.UMLInterface) {
-      fullPath = basePath + '/' + elem.name + '.py'
+      fullPath = basePath + '/' + ((options.lowerCase) ? codegen.toCamelCase(elem.name.toLowerCase()) : codegen.toCamelCase(elem.name)) + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine(options.installPath)
       codeWriter.writeLine('# -*- coding: utf-8 -*-')
@@ -324,7 +324,7 @@ class PythonCodeGenerator {
 
     // Enum
     } else if (elem instanceof type.UMLEnumeration) {
-      fullPath = basePath + '/' + elem.name + '.py'
+      fullPath = basePath + '/' + ((options.lowerCase) ? elem.name.toLowerCase() : elem.name) + '.py'
       codeWriter = new codegen.CodeWriter(this.getIndentString(options))
       codeWriter.writeLine(options.installPath)
       codeWriter.writeLine('# -*- coding: utf-8 -*-')

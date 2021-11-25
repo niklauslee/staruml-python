@@ -10,3 +10,5 @@ Thumbs.db
 dev.txt
 .vscode
 *.code-workspace
+#IDE files
+.idea

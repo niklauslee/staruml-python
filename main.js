@@ -29,7 +29,8 @@ function getGenOptions() {
     installPath: app.preferences.get('python.gen.installPath'),
     useTab: app.preferences.get('python.gen.useTab'),
     indentSpaces: app.preferences.get('python.gen.indentSpaces'),
-    docString: app.preferences.get('python.gen.docString')
+    docString: app.preferences.get('python.gen.docString'),
+    lowerCase: app.preferences.get('python.gen.lowerCase')
   }
 }
 

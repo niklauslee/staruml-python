@@ -69,6 +69,12 @@
       "description": "Create a package structure diagram for all packages",
       "type": "check",
       "default": true
+    },
+    "python.gen.lowerCase": {
+      "text": "Lower Case Filenames",
+      "description": "Make filenames lower case, according to PEP8 recommendation.",
+      "type": "check",
+      "default": false
     }
   }
 }
