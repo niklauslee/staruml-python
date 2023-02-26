@@ -181,7 +181,8 @@ class PythonCodeGenerator {
 
       // params
       var params = elem.getNonReturnParameters()
-      var paramStr = params.map(function (p) { return p.name }).join(', ')
+      //var paramStr = params.map(function (p) { return p.name }).join(', ')
+      var paramStr = params.map(function (p) { if (p.defaultValue.length > 0 ) {return p.name+'='+p.defaultValue} else {return p.name} }).join(', ')
 
       if (elem.isStatic) {
         codeWriter.writeLine('@classmethod')
