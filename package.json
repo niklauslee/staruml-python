@@ -7,7 +7,7 @@
   "keywords": [
     "python"
   ],
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": {
     "name": "Minkyu Lee",
     "email": "niklaus.lee@gmail.com",
@@ -15,6 +15,6 @@
   },
   "license": "MIT",
   "engines": {
-    "staruml": "^3.0.0"
+    "staruml": "^6.0.0"
   }
 }

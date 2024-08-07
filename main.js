@@ -21,28 +21,28 @@
  *
  */
 
-const codeGenerator = require('./code-generator')
-const { PythonCodeAnalyzer } = require("./code-analyzer")
+const codeGenerator = require("./code-generator");
+const { PythonCodeAnalyzer } = require("./code-analyzer");
 
 function getGenOptions() {
   return {
-    installPath: app.preferences.get('python.gen.installPath'),
-    useTab: app.preferences.get('python.gen.useTab'),
-    indentSpaces: app.preferences.get('python.gen.indentSpaces'),
-    docString: app.preferences.get('python.gen.docString'),
-    lowerCase: app.preferences.get('python.gen.lowerCase')
-  }
+    installPath: app.preferences.get("python.gen.installPath"),
+    useTab: app.preferences.get("python.gen.useTab"),
+    indentSpaces: app.preferences.get("python.gen.indentSpaces"),
+    docString: app.preferences.get("python.gen.docString"),
+    lowerCase: app.preferences.get("python.gen.lowerCase"),
+  };
 }
 
 function getRevOptions() {
   return {
-    skipSelfParam: app.preferences.get('python.rev.skipSelfParam'),
-    skipMagicMethods: app.preferences.get('python.rev.skipMagicMethods'),
-    pythonPath: app.preferences.get('python.rev.PythonPath'),
-    typeHierarchy: app.preferences.get('java.rev.typeHierarchy'),
-    packageOverview: app.preferences.get('java.rev.packageOverview'),
-    packageStructure: app.preferences.get('java.rev.packageStructure')
-  }
+    skipSelfParam: app.preferences.get("python.rev.skipSelfParam"),
+    skipMagicMethods: app.preferences.get("python.rev.skipMagicMethods"),
+    pythonPath: app.preferences.get("python.rev.PythonPath"),
+    typeHierarchy: app.preferences.get("java.rev.typeHierarchy"),
+    packageOverview: app.preferences.get("java.rev.packageOverview"),
+    packageStructure: app.preferences.get("java.rev.packageStructure"),
+  };
 }
 
 /**
@@ -52,39 +52,52 @@ function getRevOptions() {
  * @param {string} path
  * @param {Object} options
  */
-function _handleGenerate(base, path, options) {
+async function _handleGenerate(base, path, options) {
   // If options is not passed, get from preference
-  options = options || getGenOptions()
+  options = options || getGenOptions();
   // If base is not assigned, popup ElementPicker
   if (!base) {
-    app.elementPickerDialog.showDialog('Select a base model to generate codes', null, type.UMLPackage).then(function ({
-      buttonId,
-      returnValue
-    }) {
-      if (buttonId === 'ok') {
-        base = returnValue
-        // If path is not assigned, popup Open Dialog to select a folder
-        if (!path) {
-          var files = app.dialogs.showOpenDialog('Select a folder where generated codes to be located', null, null, { properties: ['openDirectory'] })
-          if (files && files.length > 0) {
-            path = files[0]
-            codeGenerator.generate(base, path, options)
+    app.elementPickerDialog
+      .showDialog(
+        "Select a base model to generate codes",
+        null,
+        type.UMLPackage,
+      )
+      .then(async function ({ buttonId, returnValue }) {
+        if (buttonId === "ok") {
+          base = returnValue;
+          // If path is not assigned, popup Open Dialog to select a folder
+          if (!path) {
+            var files = await app.dialogs.showOpenDialogAsync(
+              "Select a folder where generated codes to be located",
+              null,
+              null,
+              { properties: ["openDirectory"] },
+            );
+            if (files && files.length > 0) {
+              path = files[0];
+              codeGenerator.generate(base, path, options);
+            }
+          } else {
+            codeGenerator.generate(base, path, options);
           }
-        } else {
-          codeGenerator.generate(base, path, options)
         }
-      }
-    })
+      });
   } else {
     // If path is not assigned, popup Open Dialog to select a folder
     if (!path) {
-      var files = app.dialogs.showOpenDialog('Select a folder where generated codes to be located', null, null, { properties: ['openDirectory'] })
+      var files = await app.dialogs.showOpenDialogAsync(
+        "Select a folder where generated codes to be located",
+        null,
+        null,
+        { properties: ["openDirectory"] },
+      );
       if (files && files.length > 0) {
-        path = files[0]
-        codeGenerator.generate(base, path, options)
+        path = files[0];
+        codeGenerator.generate(base, path, options);
       }
     } else {
-      codeGenerator.generate(base, path, options)
+      codeGenerator.generate(base, path, options);
     }
   }
 }
@@ -93,7 +106,7 @@ function _handleGenerate(base, path, options) {
  * Popup PreferenceDialog with Python Preference Schema
  */
 function _handleConfigure() {
-  app.commands.execute('application:preferences', 'python')
+  app.commands.execute("application:preferences", "python");
 }
 
 /**
@@ -102,27 +115,33 @@ function _handleConfigure() {
  * @param {string} basePath
  * @param {Object} options
  */
-function _handleReverse(basePath, options) {
+async function _handleReverse(basePath, options) {
   // If options is not passed, get from preference
-  options = options || getRevOptions()
+  options = options || getRevOptions();
 
   // If basePath is not assigned, popup Open Dialog to select a folder
   if (!basePath) {
-    var files = app.dialogs.showOpenDialog('Select Folder', null, null, { properties: ['openDirectory'] })
+    var files = await app.dialogs.showOpenDialogAsync(
+      "Select Folder",
+      null,
+      null,
+      {
+        properties: ["openDirectory"],
+      },
+    );
     if (files && files.length > 0) {
-      basePath = files[0]
+      basePath = files[0];
     }
   }
 
-  var pythonCodeAnalyzer = new PythonCodeAnalyzer(options)
-  pythonCodeAnalyzer.analyze(basePath)
+  var pythonCodeAnalyzer = new PythonCodeAnalyzer(options);
+  pythonCodeAnalyzer.analyze(basePath);
 }
 
 function init() {
-  app.commands.register('python:generate', _handleGenerate)
-  app.commands.register('python:reverse', _handleReverse)
-  app.commands.register('python:configure', _handleConfigure)
+  app.commands.register("python:generate", _handleGenerate);
+  app.commands.register("python:reverse", _handleReverse);
+  app.commands.register("python:configure", _handleConfigure);
 }
 
-
-exports.init = init
+exports.init = init;

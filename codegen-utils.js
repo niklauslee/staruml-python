@@ -28,40 +28,40 @@ class CodeWriter {
   /**
    * @constructor
    */
-  constructor (indentString) {
+  constructor(indentString) {
     /** @member {Array.<string>} lines */
-    this.lines = []
+    this.lines = [];
 
     /** @member {string} indentString */
-    this.indentString = indentString || '    ' // default 4 spaces
+    this.indentString = indentString || "    "; // default 4 spaces
 
     /** @member {Array.<string>} indentations */
-    this.indentations = []
+    this.indentations = [];
   }
 
   /**
    * Indent
    */
-  indent () {
-    this.indentations.push(this.indentString)
+  indent() {
+    this.indentations.push(this.indentString);
   }
 
   /**
    * Outdent
    */
-  outdent () {
-    this.indentations.splice(this.indentations.length - 1, 1)
+  outdent() {
+    this.indentations.splice(this.indentations.length - 1, 1);
   }
 
   /**
    * Write a line
    * @param {string} line
    */
-  writeLine (line) {
+  writeLine(line) {
     if (line) {
-      this.lines.push(this.indentations.join('') + line)
+      this.lines.push(this.indentations.join("") + line);
     } else {
-      this.lines.push('')
+      this.lines.push("");
     }
   }
 
@@ -69,24 +69,22 @@ class CodeWriter {
    * Return as all string data
    * @return {string}
    */
-  getData () {
-    return this.lines.join('\n')
+  getData() {
+    return this.lines.join("\n");
   }
-
 }
-
 
 exports.CodeWriter = CodeWriter;
 
 /**
-* Return as camelCase the given string
-* @param {string} name
-* @return {string} camelCase name
-*/
-function toCamelCase(name){
- return name.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function(match, index) {
-   if (+match === 0) return "";
-   return index === 0 ? match.toLowerCase() : match.toUpperCase();
- });
+ * Return as camelCase the given string
+ * @param {string} name
+ * @return {string} camelCase name
+ */
+function toCamelCase(name) {
+  return name.replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, function (match, index) {
+    if (+match === 0) return "";
+    return index === 0 ? match.toLowerCase() : match.toUpperCase();
+  });
 }
 export { toCamelCase };
